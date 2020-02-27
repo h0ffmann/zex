@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package rocks.heikoseeberger.xtream
 
+import java.util.UUID
+
 import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.ActorSystem
 import akka.actor.typed.ActorRef
-import akka.actor.typed.scaladsl.adapter.UntypedActorSystemOps
 import akka.stream.{ Attributes, DelayOverflowStrategy, Materializer, SinkRef }
 import akka.stream.scaladsl.{ Flow, FlowWithContext, RestartSink, Sink, Source }
 import rocks.heikoseeberger.xtream.WordShuffler.{ ShuffleWord, WordShuffled }
@@ -41,15 +41,15 @@ object TextShuffler {
   def apply(
       config: Config,
       wordShuffler: ActorRef[WordShuffler.Command]
-  )(implicit mat: Materializer, untypedSystem: ActorSystem): Process = {
+  )(implicit mat: Materializer, typedSystem: akka.actor.typed.ActorSystem[_]): Process = {
     import config._
-    import untypedSystem.dispatcher
+    import typedSystem.executionContext
 
     def wordShufflerSinkRef(): Future[SinkRef[(ShuffleWord, Respondee[WordShuffled])]] =
       wordShuffler
         .ask { replyTo: ActorRef[SinkRef[(ShuffleWord, Respondee[WordShuffled])]] =>
           WordShuffler.GetSinkRef(replyTo)
-        }(wordShufflerAskTimeout, untypedSystem.scheduler)
+        }(wordShufflerAskTimeout, typedSystem.scheduler)
         .recoverWith { case _ => wordShufflerSinkRef() }
 
     val wordShufflerSink =
@@ -69,8 +69,9 @@ object TextShuffler {
             .map { shuffleWord =>
               val promisedWordShuffled = Promise[WordShuffled]()
               val respondee =
-                untypedSystem.spawnAnonymous(
-                  Respondee[WordShuffled](promisedWordShuffled, wordShufflerProcessTimeout)
+                typedSystem.systemActorOf(
+                  Respondee[WordShuffled](promisedWordShuffled, wordShufflerProcessTimeout),
+                  s"${UUID.randomUUID().toString}"
                 )
               (shuffleWord, promisedWordShuffled, respondee)
             }

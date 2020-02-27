@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,24 @@ package rocks.heikoseeberger.xtream
 import akka.Done
 import akka.actor.{ CoordinatedShutdown, Scheduler, ActorSystem => UntypedSystem }
 import akka.actor.CoordinatedShutdown.{ PhaseServiceRequestsDone, PhaseServiceUnbind, Reason }
+import akka.actor.typed.scaladsl.ActorContext
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.stream.{ ActorAttributes, Materializer, OverflowStrategy, Supervision }
 import akka.stream.scaladsl.{ Sink, Source }
 import akka.stream.QueueOfferResult.{ Dropped, Enqueued }
-import org.apache.logging.log4j.scala.Logging
 import rocks.heikoseeberger.xtream.Processor.{
   ProcessorError,
   ProcessorUnavailable,
   processorUnavailableHandler
 }
 import rocks.heikoseeberger.xtream.TextShuffler.{ ShuffleText, TextShuffled }
+
 import scala.concurrent.{ Future, Promise }
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{ Failure, Success }
 
-object Api extends Logging {
+object Api {
 
   final case class Config(hostname: String,
                           port: Int,
@@ -47,7 +48,7 @@ object Api extends Logging {
   def apply(
       config: Config,
       textShuffler: TextShuffler.Process
-  )(implicit untypedSystem: UntypedSystem, mat: Materializer): Unit = {
+  )(implicit untypedSystem: UntypedSystem, mat: Materializer, ctx: ActorContext[_]): Unit = {
     import config._
     import untypedSystem.dispatcher
 
@@ -66,11 +67,11 @@ object Api extends Logging {
       .bindAndHandle(route(config), hostname, port)
       .onComplete {
         case Failure(cause) =>
-          logger.error(s"Shutting down, because cannot bind to $hostname:$port!", cause)
+          ctx.log.error(s"Shutting down, because cannot bind to $hostname:$port!", cause)
           shutdown.run(BindFailure)
 
         case Success(binding) =>
-          logger.info(s"Listening for HTTP connections on ${binding.localAddress}")
+          ctx.log.info(s"Listening for HTTP connections on ${binding.localAddress}")
           shutdown.addTask(PhaseServiceUnbind, "api.unbind") { () =>
             binding.unbind()
           }

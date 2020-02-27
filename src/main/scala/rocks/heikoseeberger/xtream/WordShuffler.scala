@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,11 @@ import akka.actor.typed.{ ActorRef, Behavior }
 import akka.actor.typed.scaladsl.Behaviors
 import akka.stream.{ KillSwitches, Materializer, SinkRef, UniqueKillSwitch }
 import akka.stream.scaladsl.{ FlowWithContext, Keep, MergeHub, Sink, StreamRefs }
-import akka.stream.typed.scaladsl.ActorMaterializer
-import org.apache.logging.log4j.scala.Logging
 import scala.annotation.tailrec
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Random, Success }
 
-object WordShuffler extends Logging {
+object WordShuffler {
 
   type Process =
     FlowWithContext[ShuffleWord, Respondee[WordShuffled], WordShuffled, Respondee[WordShuffled], Any]
@@ -42,27 +40,28 @@ object WordShuffler extends Logging {
   final case class WordShuffled(text: String)
 
   def apply(): Behavior[Command] =
-    Behaviors.setup { context =>
-      implicit val mat: Materializer    = ActorMaterializer()(context.system)
-      implicit val ec: ExecutionContext = context.executionContext
-      val self                          = context.self
+    Behaviors.setup { implicit ctx =>
+      implicit val mat: Materializer    = Materializer(ctx)
+      implicit val ec: ExecutionContext = ctx.executionContext
+      val self                          = ctx.self
       val (sink, switch, done)          = runProcess()
 
       done.onComplete { reason =>
-        logger.warn(s"Process completed: $reason")
+        ctx.log.warn(s"Process completed: $reason")
         self ! Stop // Probably better to run the process again!
       }
 
       Behaviors.receiveMessagePartial {
         case GetSinkRef(replyTo) =>
-          StreamRefs
+          val sinkRefs: SinkRef[(ShuffleWord, Respondee[WordShuffled])] = StreamRefs
             .sinkRef()
             .to(sink)
             .run()
-            .onComplete {
-              case Success(sinkRef) => replyTo ! sinkRef
-              case Failure(cause)   => logger.error("Cannot create GetTripExecutionSinkRef!", cause)
-            }
+          //TODO FIX
+//            .onComplete {
+//              case Success(sinkRef) => replyTo ! sinkRef
+//              case Failure(cause)   => ctx.log.error("Cannot create GetTripExecutionSinkRef!", cause)
+//            }
           Behaviors.same
 
         case Shutdown =>

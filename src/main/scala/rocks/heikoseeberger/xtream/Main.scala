@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package rocks.heikoseeberger.xtream
 import akka.actor.{ ActorSystem => UntypedSystem }
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.scaladsl.adapter.{ TypedActorSystemOps, _ }
+import akka.actor.typed.scaladsl.adapter._
 import akka.cluster.typed.{
   Cluster,
   ClusterSingleton,
@@ -28,46 +28,42 @@ import akka.cluster.typed.{
   Subscribe,
   Unsubscribe
 }
+import pureconfig.generic.auto._
 import akka.stream.Materializer
-import akka.stream.typed.scaladsl.ActorMaterializer
-import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
-import org.apache.logging.log4j.scala.Logging
-import pureconfig.generic.auto.exportReader
-import pureconfig.loadConfigOrThrow
+import pureconfig.ConfigSource
 
-object Main extends Logging {
+object Main {
 
   private final case class Config(api: Api.Config, textShuffler: TextShuffler.Config)
 
   def main(args: Array[String]): Unit = {
-    sys.props += "log4j2.contextSelector" -> classOf[AsyncLoggerContextSelector].getName // Always use async logging!
 
-    val config = loadConfigOrThrow[Config]("xtream") // Must be first to aviod creating the actor system on failure!
+    val config = ConfigSource.default.at("xtream").loadOrThrow[Config] // Must be first to aviod creating the actor system on failure!
     val system = UntypedSystem("xtream")
     system.spawn(Main(config), "main")
   }
 
   def apply(config: Config): Behavior[SelfUp] =
-    Behaviors.setup { context =>
-      logger.info(s"${context.system.name} started and ready to join cluster")
+    Behaviors.setup { implicit ctx =>
+      ctx.log.info(s" started and ready to join cluster")
 
-      val cluster = Cluster(context.system)
-      cluster.subscriptions ! Subscribe(context.self, classOf[SelfUp])
+      val cluster = Cluster(ctx.system)
+      cluster.subscriptions ! Subscribe(ctx.self, classOf[SelfUp])
 
       Behaviors.receive { (context, _) =>
-        logger.info(s"${context.system.name} joined cluster and is up")
+        ctx.log.info(s"${context.system.name} joined cluster and is up")
 
         cluster.subscriptions ! Unsubscribe(context.self)
 
-        implicit val untypedSystem: UntypedSystem = context.system.toUntyped
-        implicit val mat: Materializer            = ActorMaterializer()(context.system)
+        implicit val untypedSystem: UntypedSystem = context.system.toClassic
+        implicit val mat: Materializer            = Materializer(ctx)
 
         val wordShuffler =
           ClusterSingleton(context.system).init(
             SingletonActor(WordShuffler(), "word-shuffler").withStopMessage(WordShuffler.Shutdown)
           )
 
-        Api(config.api, TextShuffler(config.textShuffler, wordShuffler))
+        Api(config.api, TextShuffler(config.textShuffler, wordShuffler)(mat, ctx.system))
 
         Behaviors.empty
       }

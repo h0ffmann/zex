@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ object ExpiringPromise {
                                         scheduler: Scheduler): Promise[A] = {
     val promise = Promise[A]()
     val expired = after(timeout, scheduler)(Future.failed(PromiseExpired(timeout)))
-    promise.tryCompleteWith(expired)
+    promise.completeWith(expired)
     promise
   }
 }

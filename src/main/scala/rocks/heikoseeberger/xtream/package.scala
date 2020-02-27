@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Heiko Seeberger
+ * Copyright 2020 Matheus Hoffmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,9 @@ import scala.concurrent.duration.FiniteDuration
 
 package object xtream {
 
-  type Traversable[+A] = scala.collection.immutable.Traversable[A]
-  type Iterable[+A]    = scala.collection.immutable.Iterable[A]
-  type Seq[+A]         = scala.collection.immutable.Seq[A]
-  type IndexedSeq[+A]  = scala.collection.immutable.IndexedSeq[A]
+  type Iterable[+A]   = scala.collection.immutable.Iterable[A]
+  type Seq[+A]        = scala.collection.immutable.Seq[A]
+  type IndexedSeq[+A] = scala.collection.immutable.IndexedSeq[A]
 
   type Respondee[A] = ActorRef[Respondee.Response[A]]
 
