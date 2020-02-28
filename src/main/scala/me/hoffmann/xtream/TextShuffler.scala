@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package rocks.heikoseeberger.xtream
+package me.hoffmann.xtream
 
 import java.util.UUID
 
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.ActorRef
-import akka.stream.{ Attributes, DelayOverflowStrategy, Materializer, SinkRef }
-import akka.stream.scaladsl.{ Flow, FlowWithContext, RestartSink, Sink, Source }
-import rocks.heikoseeberger.xtream.WordShuffler.{ ShuffleWord, WordShuffled }
-import scala.concurrent.{ Await, Future, Promise }
+import akka.stream.{Attributes, DelayOverflowStrategy, Materializer, SinkRef}
+import akka.stream.scaladsl.{Flow, FlowWithContext, RestartSink, Sink, Source}
+import me.hoffmann.xtream.WordShuffler.{ShuffleWord, WordShuffled}
+import rocks.heikoseeberger.xtream.WordShuffler.{ShuffleWord, WordShuffled}
+
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration.FiniteDuration
 
 object TextShuffler {

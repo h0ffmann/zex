@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rocks.heikoseeberger.xtream
+package me.hoffmann.xtream
 
 import akka.Done
 import akka.actor.{ CoordinatedShutdown, Scheduler, ActorSystem => UntypedSystem }
@@ -25,12 +25,12 @@ import akka.http.scaladsl.server.Route
 import akka.stream.{ ActorAttributes, Materializer, OverflowStrategy, Supervision }
 import akka.stream.scaladsl.{ Sink, Source }
 import akka.stream.QueueOfferResult.{ Dropped, Enqueued }
-import rocks.heikoseeberger.xtream.Processor.{
+import Processor.{
   ProcessorError,
   ProcessorUnavailable,
   processorUnavailableHandler
 }
-import rocks.heikoseeberger.xtream.TextShuffler.{ ShuffleText, TextShuffled }
+import TextShuffler.{ ShuffleText, TextShuffled }
 
 import scala.concurrent.{ Future, Promise }
 import scala.concurrent.duration.FiniteDuration

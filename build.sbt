@@ -2,7 +2,7 @@
 // Projects
 // *****************************************************************************
 
-lazy val xtream =
+lazy val zex =
   project
     .in(file("."))
     .enablePlugins(AutomateHeaderPlugin)
@@ -72,24 +72,4 @@ lazy val commonSettings =
 lazy val scalafmtSettings =
   Seq(
     scalafmtOnCompile := true,
-  )
-
-lazy val commandAliases =
-  addCommandAlias(
-    "r1",
-    """|reStart
-       |---
-       |-Dakka.cluster.seed-nodes.0=akka://xtream@127.0.0.1:25520
-       |-Dakka.remote.artery.canonical.hostname=127.0.0.1
-       |-Dxtream.api.hostname=127.0.0.1
-       |-Dxtream.api.port=8080""".stripMargin
-  ) ++
-  addCommandAlias(
-    "r2",
-    """|reStart
-       |---
-       |-Dakka.cluster.seed-nodes.0=akka://xtream@127.0.0.1:25520
-       |-Dakka.remote.artery.canonical.hostname=127.0.0.2
-       |-Dxtream.api.hostname=127.0.0.2
-       |-Dxtream.api.port=8080""".stripMargin
   )

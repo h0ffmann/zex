@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rocks.heikoseeberger.xtream
+package me.hoffmann.xtream
 
 import akka.http.scaladsl.model.StatusCodes.ServiceUnavailable
 import akka.http.scaladsl.server.Directives.complete

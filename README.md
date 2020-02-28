@@ -1,6 +1,6 @@
-# xtream #
+# zEX #
 
-Welcome to xtream!
+Functional programming design experiments
 
 ## Contribution policy ##
 

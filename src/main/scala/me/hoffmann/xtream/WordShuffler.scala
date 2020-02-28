@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rocks.heikoseeberger.xtream
+package me.hoffmann.xtream
 
 import akka.{ Done, NotUsed }
 import akka.actor.typed.{ ActorRef, Behavior }

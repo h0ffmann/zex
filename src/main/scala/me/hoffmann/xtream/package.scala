@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rocks.heikoseeberger
+package me.hoffmann
 
 import akka.actor.typed.ActorRef
 import akka.stream.DelayOverflowStrategy
