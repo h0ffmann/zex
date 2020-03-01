@@ -16,25 +16,25 @@
 
 package me.hoffmann
 
-import akka.actor.typed.ActorRef
-import akka.stream.DelayOverflowStrategy
-import akka.stream.scaladsl.FlowWithContext
-import scala.concurrent.duration.FiniteDuration
+//import akka.actor.typed.ActorRef
+//import akka.stream.DelayOverflowStrategy
+//import akka.stream.scaladsl.FlowWithContext
+//import scala.concurrent.duration.FiniteDuration
 
-package object xtream {
+package object zex {
 
   type Iterable[+A]   = scala.collection.immutable.Iterable[A]
   type Seq[+A]        = scala.collection.immutable.Seq[A]
   type IndexedSeq[+A] = scala.collection.immutable.IndexedSeq[A]
 
-  type Respondee[A] = ActorRef[Respondee.Response[A]]
+  //type Respondee[A] = ActorRef[Respondee.Response[A]]
 
-  final implicit class FlowWithContextExt[In, CtxIn, Out, CtxOut](
-      val flowWithContext: FlowWithContext[In, CtxIn, Out, CtxOut, Any]
-  ) extends AnyVal {
-
-    def delay(of: FiniteDuration,
-              strategy: DelayOverflowStrategy): FlowWithContext[In, CtxIn, Out, CtxOut, Any] =
-      FlowWithContext.fromTuples(flowWithContext.asFlow.delay(of, strategy))
-  }
+//  final implicit class FlowWithContextExt[In, CtxIn, Out, CtxOut](
+//      val flowWithContext: FlowWithContext[In, CtxIn, Out, CtxOut, Any]
+//  ) extends AnyVal {
+//
+//    def delay(of: FiniteDuration,
+//              strategy: DelayOverflowStrategy): FlowWithContext[In, CtxIn, Out, CtxOut, Any] =
+//      FlowWithContext.fromTuples(flowWithContext.asFlow.delay(of, strategy))
+//  }
 }

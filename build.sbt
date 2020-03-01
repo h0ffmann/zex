@@ -9,12 +9,12 @@ lazy val zex =
     .settings(settings)
     .settings(
       libraryDependencies ++= Seq(
-        library.akkaActorTyped,
-        library.akkaClusterTyped,
-        library.akkaHttp,
-        library.akkaStreamTyped,
-        library.akkaHttp,
-        library.pureConfig,
+        library.kindProjector,
+        library.logbackClassic,
+        library.zLog,
+        library.ciris,
+        library.zio,
+        library.zioWcats
       )
     )
 
@@ -24,20 +24,14 @@ lazy val zex =
 
 lazy val library =
   new {
-    object Version {
-      val akka          = "2.6.3"
-      val akkaHttp      = "10.1.8"
-      val log4j         = "2.11.2"
-      val log4jApiScala = "11.0"
-      val pureConfig    = "0.12.2"
-      val jsonHttp      = "1.31.0"
-    }
-    val akkaActorTyped   = "com.typesafe.akka"        %% "akka-actor-typed"   % Version.akka
-    val akkaClusterTyped = "com.typesafe.akka"        %% "akka-cluster-typed" % Version.akka
-    val akkaHttp         = "com.typesafe.akka"        %% "akka-http"          % Version.akkaHttp
-    val akkaStreamTyped  = "com.typesafe.akka"        %% "akka-stream-typed"  % Version.akka
-    val pureConfig       = "com.github.pureconfig"    %% "pureconfig"         % Version.pureConfig
-    val httpJson         = "de.heikoseeberger"        %% "akka-http-json4s"   % Version.jsonHttp
+    object Version {}
+    val zLog           = "dev.zio"        %% "zio-logging"       % "0.2.2"
+    val ciris          = "is.cir"         %% "ciris"             % "1.0.4"
+    val zio            = "dev.zio"        %% "zio"               % "1.0.0-RC17"
+    val zioWcats       = "dev.zio"        %% "zio-interop-cats"  % "2.0.0.0-RC10"
+    val kindProjector  = "org.typelevel"  %  "kind-projector"    % "0.11.0" cross CrossVersion.full
+    val logbackClassic = "ch.qos.logback" %  "logback-classic"   % "1.2.3"
+
   }
 
 // *****************************************************************************
@@ -45,9 +39,9 @@ lazy val library =
 // *****************************************************************************
 
 lazy val settings =
-  commonSettings ++ 
-  scalafmtSettings ++
-  commandAliases
+  commonSettings //++
+  //scalafmtSettings //++
+  //commandAliases
 
 lazy val commonSettings =
   Seq(
@@ -56,20 +50,7 @@ lazy val commonSettings =
     organizationName := "Matheus Hoffmann",
     startYear := Some(2020),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-    scalacOptions ++= Seq(
-      "-unchecked",
-      "-deprecation",
-      "-language:_",
-      "-target:jvm-1.8",
-      "-encoding", "UTF-8"//,
-      //"-Ypartial-unification",
-      //"-Ywarn-unused-import",
-    ),
+    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     Compile / unmanagedSourceDirectories := Seq((Compile / scalaSource).value),
     Test / unmanagedSourceDirectories := Seq((Test / scalaSource).value),
-  )
-
-lazy val scalafmtSettings =
-  Seq(
-    scalafmtOnCompile := true,
   )
