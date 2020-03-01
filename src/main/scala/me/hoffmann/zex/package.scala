@@ -36,9 +36,11 @@ package object zex {
   //val logFormat = "[correlation-id = %s] %s"
   val logFormat = " %s"
 
-  val env: UIO[Logging] =
+  val logEnv: UIO[Logging] =
     Slf4jLogger.make { (_, message) =>
       logFormat.format(message)
     }
+
+  val anotherEnv: UIO[FakeEnv] = UIO.succeed(new FakeEnv {override def a: String = "potato"})
 
 }

@@ -25,6 +25,8 @@ object Main extends zio.App {
     (for {
       _     <- log("info message without correlation id")
 
-    } yield 1).provideSomeM(env)
+    } yield 1)
+      .provideSomeM(logEnv)
+      //.provideM(anotherEnv)
 }
 
