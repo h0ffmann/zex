@@ -15,10 +15,10 @@ lazy val zex =
         library.sl4j,
         library.zLogSl4j,
         library.janino,
-        library.ciris,
         library.zio,
         library.zioWcats
-      )
+      ) ++
+      library.Ciris
     )
 
 // *****************************************************************************
@@ -28,12 +28,19 @@ lazy val zex =
 lazy val library =
   new {
     object Version {}
+
     val zLog           = "dev.zio"             %% "zio-logging"       % "0.2.2"
     val zLogSl4j       = "dev.zio"             %% "zio-logging-slf4j" % "0.2.2"
     val sl4j           = "org.slf4j"           % "slf4j-api"          % "1.7.30"
     val janino         = "org.codehaus.janino" % "janino"             % "3.1.0"
 
-    val ciris          = "is.cir"              %% "ciris"             % "1.0.4"
+    val Ciris = Seq(
+      "is.cir" %% "ciris",
+      "is.cir" %% "ciris-enumeratum",
+      "is.cir" %% "ciris-refined"
+    ).map(_ % "1.0.4")
+
+
     val zio            = "dev.zio"             %% "zio"               % "1.0.0-RC17"
     val zioWcats       = "dev.zio"             %% "zio-interop-cats"  % "2.0.0.0-RC10"
     val kindProjector  = "org.typelevel"       %  "kind-projector"    % "0.11.0" cross CrossVersion.full
