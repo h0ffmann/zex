@@ -16,19 +16,15 @@
 
 package me.hoffmann.zex
 
-import zio.clock.Clock
-import zio.console.Console
-import zio.{URIO, ZIO}
+import zio.ZIO
 import zio.logging._
 
 object Main extends zio.App {
 
-  val env: URIO[Console with Clock, Logging] =
-    Logging.console((_, logEntry) =>
-      logEntry
-    )
-
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    log("Hello from ZIO logger").as(0).provideSomeM(env)
+    (for {
+      _     <- log("info message without correlation id")
+
+    } yield 1).provideSomeM(env)
 }
 

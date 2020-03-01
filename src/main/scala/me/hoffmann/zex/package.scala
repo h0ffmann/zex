@@ -16,10 +16,9 @@
 
 package me.hoffmann
 
-//import akka.actor.typed.ActorRef
-//import akka.stream.DelayOverflowStrategy
-//import akka.stream.scaladsl.FlowWithContext
-//import scala.concurrent.duration.FiniteDuration
+import zio.UIO
+import zio.logging.{ LogAnnotation, Logging }
+import zio.logging.slf4j.Slf4jLogger
 
 package object zex {
 
@@ -27,14 +26,19 @@ package object zex {
   type Seq[+A]        = scala.collection.immutable.Seq[A]
   type IndexedSeq[+A] = scala.collection.immutable.IndexedSeq[A]
 
-  //type Respondee[A] = ActorRef[Respondee.Response[A]]
+  val correlationId: LogAnnotation[String] = LogAnnotation[String](
+    name = "correlationId",
+    initialValue = "undefined-correlation-id",
+    combine = (_, newValue) => newValue,
+    render = identity
+  )
 
-//  final implicit class FlowWithContextExt[In, CtxIn, Out, CtxOut](
-//      val flowWithContext: FlowWithContext[In, CtxIn, Out, CtxOut, Any]
-//  ) extends AnyVal {
-//
-//    def delay(of: FiniteDuration,
-//              strategy: DelayOverflowStrategy): FlowWithContext[In, CtxIn, Out, CtxOut, Any] =
-//      FlowWithContext.fromTuples(flowWithContext.asFlow.delay(of, strategy))
-//  }
+  //val logFormat = "[correlation-id = %s] %s"
+  val logFormat = " %s"
+
+  val env: UIO[Logging] =
+    Slf4jLogger.make { (_, message) =>
+      logFormat.format(message)
+    }
+
 }
