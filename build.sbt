@@ -17,7 +17,9 @@ lazy val zex =
         library.janino,
         library.zio,
         library.zioWcats,
-        library.appium
+        library.appium,
+        library.akka,
+        library.cRetry
       ) ++
       library.Ciris
     )
@@ -35,7 +37,9 @@ lazy val library =
     val sl4j           = "org.slf4j"           % "slf4j-api"          % "1.7.30"
     val janino         = "org.codehaus.janino" % "janino"             % "3.1.0"
 
-    val appium         = "io.appium" % "java-client" % "7.3.0"
+    val appium         = "io.appium"         % "java-client"        % "7.3.0"
+    val akka           = "com.typesafe.akka" %% "akka-actor-typed"  % "2.6.3"
+    val cRetry         = "com.github.cb372"  %% "cats-retry"        % "1.1.0"
 
     val Ciris = Seq(
       "is.cir" %% "ciris",

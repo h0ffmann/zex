@@ -1,4 +1,4 @@
-package me.hoffmann.zex.retry
+package me.hoffmann.zex.appium
 
 import io.appium.java_client.MobileElement
 import io.appium.java_client.android.AndroidDriver
@@ -22,7 +22,7 @@ object Poor {
     }.get
   }
 
-  def pollElementById(id: String, pollTimeInMillis: Long, maxTimeInMillis: Long)
+  def pollElementById(id: String, maxTimeInMillis: Long, pollTimeInMillis: Long = 150)
                      (implicit driver: AndroidDriver[MobileElement]): MobileElement  = {
     go(id, pollTimeInMillis, maxTimeInMillis)
   }
