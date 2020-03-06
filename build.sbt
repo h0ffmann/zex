@@ -16,7 +16,8 @@ lazy val zex =
         library.zLogSl4j,
         library.janino,
         library.zio,
-        library.zioWcats
+        library.zioWcats,
+        library.appium
       ) ++
       library.Ciris
     )
@@ -33,6 +34,8 @@ lazy val library =
     val zLogSl4j       = "dev.zio"             %% "zio-logging-slf4j" % "0.2.2"
     val sl4j           = "org.slf4j"           % "slf4j-api"          % "1.7.30"
     val janino         = "org.codehaus.janino" % "janino"             % "3.1.0"
+
+    val appium         = "io.appium" % "java-client" % "7.3.0"
 
     val Ciris = Seq(
       "is.cir" %% "ciris",
