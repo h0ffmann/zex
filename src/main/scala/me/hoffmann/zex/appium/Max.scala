@@ -7,13 +7,8 @@ import retry.RetryDetails
 import retry.RetryDetails.{GivingUp, WillDelayAndRetry}
 import cats.effect.IO
 import io.appium.java_client.MobileElement
-
-import scala.concurrent.duration.FiniteDuration
 import retry._
-import retry.RetryDetails._
-
 import scala.concurrent.ExecutionContext.global
-import scala.concurrent.duration.FiniteDuration
 
 
 object Max {
@@ -41,6 +36,7 @@ object Max {
       IO(println(s"Giving up after $totalRetries within $delay retries"))
   }
 
+  //Add default policy
   def pollElementById(id: String, predicate: MobileElement => Boolean = _ => true)(policy: RetryPolicy[IO])
                      (implicit driver: AndroidDriver[MobileElement]): IO[MobileElement] = {
     retryingOnAllErrors[MobileElement](
