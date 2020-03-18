@@ -17,7 +17,7 @@
 package me.hoffmann
 
 import zio.UIO
-import zio.logging.{ LogAnnotation, Logging }
+import zio.logging.Logging
 import zio.logging.slf4j.Slf4jLogger
 
 package object zex {
@@ -26,21 +26,19 @@ package object zex {
   type Seq[+A]        = scala.collection.immutable.Seq[A]
   type IndexedSeq[+A] = scala.collection.immutable.IndexedSeq[A]
 
-  val correlationId: LogAnnotation[String] = LogAnnotation[String](
-    name = "correlationId",
-    initialValue = "undefined-correlation-id",
-    combine = (_, newValue) => newValue,
-    render = identity
-  )
+//  val correlationId: LogAnnotation[String] = LogAnnotation[String](
+//    name = "correlationId",
+//    initialValue = "undefined-correlation-id",
+//    combine = (_, newValue) => newValue,
+//    render = identity
+//  )
 
-  //val logFormat = "[correlation-id = %s] %s"
-  val logFormat = " %s"
-
-  val logEnv: UIO[Logging] =
-    Slf4jLogger.make { (_, message) =>
-      logFormat.format(message)
-    }
-
-  val anotherEnv: UIO[FakeEnv] = UIO.succeed(new FakeEnv {override def a: String = "potato"})
+//  //val logFormat = "[correlation-id = %s] %s"
+//  val logFormat = " %s"
+//
+//  val logEnv: UIO[Logging] =
+//    Slf4jLogger.make { (_, message) =>
+//      logFormat.format(message)
+//    }
 
 }

@@ -1,4 +1,4 @@
-package me.hoffmann.zex.cfg
+package me.hoffmann.zex.configuration
 
 import ciris.ConfigValue
 import eu.timepit.refined.types.string.NonEmptyString

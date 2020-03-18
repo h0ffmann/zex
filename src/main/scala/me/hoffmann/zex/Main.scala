@@ -16,17 +16,16 @@
 
 package me.hoffmann.zex
 
-import zio.ZIO
+import zio._
 import zio.logging._
 
 object Main extends zio.App {
 
-  override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
+  override def run(args: List[String]): ZIO[ZEnv, Nothing, Int] =
     (for {
       _     <- log("info message without correlation id")
 
-    } yield 1)
-      .provideSomeM(logEnv)
-      //.provideM(anotherEnv)
+    } yield 1).provideLayer[ZEnv]()
+
 }
 

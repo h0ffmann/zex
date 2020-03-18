@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.hoffmann.zex.cfg
+package me.hoffmann.zex.configuration
 
 import eu.timepit.refined.types.net.UserPortNumber
 import eu.timepit.refined.types.string.NonEmptyString

@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package me.hoffmann.zex
+package me.hoffmann.zex.configuration
 
-trait FakeEnv {
-  def a: String = "Hahaha"
+import enumeratum.{CirisEnum, Enum, EnumEntry}
+
+sealed trait AppEnvironment extends EnumEntry
+
+object AppEnvironment extends Enum[AppEnvironment] with CirisEnum[AppEnvironment] {
+  case object Local extends AppEnvironment
+  case object Testing extends AppEnvironment
+  case object Production extends AppEnvironment
+
+  val values: IndexedSeq[AppEnvironment] = findValues
 }
